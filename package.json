@@ -14,7 +14,7 @@
     "@tauri-apps/plugin-sql": "^2.0.0",
     "@tauri-apps/plugin-fs": "^2.0.0",
     "@tauri-apps/plugin-dialog": "^2.0.0",
-    "@tauri-apps/plugin-vibrator": "^2.0.0"
+    "@tauri-apps/plugin-haptics": "^2.0.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",

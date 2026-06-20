@@ -1,0 +1,87 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main, master]
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: |
+            platforms;android-34
+            build-tools;34.0.0
+            ndk;27.0.12077973
+
+      - name: Install cargo-tauri
+        run: cargo install tauri-cli --version "^2.0" --locked
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Initialize Android project
+        env:
+          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.12077973
+          ANDROID_NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.12077973
+          ANDROID_NDK_ROOT: ${{ env.ANDROID_HOME }}/ndk/27.0.12077973
+        run: cargo tauri android init
+
+      - name: Build APK (arm64-v8a only)
+        env:
+          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.12077973
+          ANDROID_NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.12077973
+          ANDROID_NDK_ROOT: ${{ env.ANDROID_HOME }}/ndk/27.0.12077973
+        run: cargo tauri android build --apk --target aarch64
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: typing-boost-apk
+          path: |
+            src-tauri/gen/android/app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
+
+      - name: Upload to gofile.io
+        run: |
+          APK=$(find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" | head -1)
+          echo "APK: $APK"
+          if [ -n "$APK" ]; then
+            RESP=$(curl -s -F "file=@${APK}" https://store1.gofile.io/uploadFile)
+            echo "Response: $RESP"
+            # 提取下载链接
+            PAGE=$(echo "$RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('data',{}).get('downloadPage',''))" 2>/dev/null || echo "")
+            echo "Download page: $PAGE"
+            echo "GOFILE_URL=$PAGE" >> $GITHUB_ENV
+            echo "::notice::APK uploaded to gofile.io: $PAGE"
+          fi
+
+      - name: Output download link
+        if: env.GOFILE_URL != ''
+        run: |
+          echo "=============================="
+          echo "APK 下载链接: ${{ env.GOFILE_URL }}"
+          echo "=============================="

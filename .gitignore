@@ -36,6 +36,11 @@ venv/
 # ===== Rust =====
 target/
 
+# ===== Build output =====
+dist/
+src-tauri/gen/android/
+src-tauri/gen/schemas/
+
 # ===== Java/JVM =====
 .gradle/
 *.class
