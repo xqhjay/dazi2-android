@@ -6,6 +6,15 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
+# 同一分支新推送时取消旧的进行中构建，避免并发浪费
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  statuses: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -96,3 +105,15 @@ jobs:
           echo "下载页: ${{ steps.upload.outputs.page }}"
           echo "提取码: ${{ steps.upload.outputs.code }}"
           echo "========================================"
+
+      - name: Publish gofile link as commit status
+        if: steps.upload.outputs.page != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -s -X POST \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
+            -d "{\"state\":\"success\",\"target_url\":\"${{ steps.upload.outputs.page }}\",\"description\":\"APK 下载页（提取码 ${{ steps.upload.outputs.code }}）\",\"context\":\"APK / gofile.io\"}"
+          echo "Commit status published."
