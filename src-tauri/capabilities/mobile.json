@@ -6,10 +6,6 @@
   "platforms": ["android", "iOS"],
   "permissions": [
     "core:default",
-    "sql:default",
-    "sql:allow-load",
-    "sql:allow-execute",
-    "sql:allow-select",
     "fs:default",
     "fs:allow-read-text-file",
     "fs:allow-write-text-file",
