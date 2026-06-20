@@ -119,7 +119,7 @@ pub fn get_trend(days: Option<i64>) -> Result<Vec<TrendPoint>, String> {
         let days = days.unwrap_or(7);
         let since = chrono::Local::now()
             .date_naive()
-            .checked_sub_days(chrono::Duration::days(days))
+            .checked_sub_days(chrono::Days::new(days as u64))
             .ok_or("date error")?
             .format("%Y-%m-%d")
             .to_string();

@@ -19,7 +19,7 @@ pub fn do_checkin() -> Result<CheckinStatus, String> {
             // 计算昨天日期
             let yesterday = chrono::Local::now()
                 .date_naive()
-                .checked_sub_days(chrono::Duration::days(1))
+                .checked_sub_days(chrono::Days::new(1))
                 .map(|d| d.format("%Y-%m-%d").to_string());
             let streak = if let Some(y) = yesterday {
                 conn.query_row(
