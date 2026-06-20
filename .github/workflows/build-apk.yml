@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
     tags: ["v*"]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+      - ".trae/**"
   workflow_dispatch:
 
 # 同一分支新推送时取消旧的进行中构建，避免并发浪费

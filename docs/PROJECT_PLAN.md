@@ -132,9 +132,9 @@
 ## 4. 交付清单
 - [x] PRD 文档（docs/PRD.md）
 - [x] 项目计划文档（docs/PROJECT_PLAN.md）
-- [ ] 源代码（src-tauri/ + src/）
-- [ ] 测试文档（docs/TEST_REPORT.md）
-- [ ] 可安装 APK
-- [ ] gofile.io 下载链接
+- [x] 源代码（src-tauri/ + src/）
+- [x] 测试文档（docs/TEST_REPORT.md）
+- [x] 可安装 APK（GitHub Actions 构建，arm64-v8a，3.96 MB）
+- [x] gofile.io 下载链接：https://gofile.io/d/Nbyind
 
-【项目经理阶段完成】请开发继续。
+【项目交付完成】

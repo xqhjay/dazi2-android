@@ -153,8 +153,14 @@
 
 ## 7. 测试结论
 
-代码层面：前端 TypeScript 类型检查通过，Vite 构建成功（包体 ~50KB）。Rust 代码逻辑完整，因本地缺 NDK/GTK 未做完整编译验证，依赖 GitHub Actions 构建。
+代码层面：前端 TypeScript 类型检查通过（`npx tsc --noEmit` 零错误），Vite 构建成功（前端包体 ~55KB）。Rust 代码逻辑完整。
 
-**建议**：先触发 GitHub Actions 构建 APK，若构建成功则交付真机验证清单。
+**构建验证（已完成）**：GitHub Actions 已成功构建 arm64-v8a APK 并上传 gofile.io。
+- 构建运行：#14（commit `32afff0`），全部步骤 success
+- APK 体积：3.96 MB（PRD 目标 ≤15MB ✅）
+- 下载页：https://gofile.io/d/Nbyind
+- 修复项：移除未注册的 `tauri-plugin-sql` 依赖（capabilities 引用了未初始化插件的权限，会破坏 Tauri 2 构建）
 
-【测试阶段完成】请项目经理汇总。
+**结论**：APK 已可交付真机验证。请在 arm64 设备执行第 6 节真机验证清单。
+
+【测试阶段完成】
